@@ -4,6 +4,8 @@ import exercise.parsers.CsvTableParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -48,4 +50,21 @@ public class SqlAcceptanceIT {
                 .containsExactly(  "paul", "lydia", "swen", "manuel", "andre");
     }
 
+    @Test
+    void shouldSupportInnerJoin(){
+        Table users = sql.readTable(getClass().getResourceAsStream("/users.csv"));
+        Table purchases = sql.readTable(getClass().getResourceAsStream("/purchases.csv"));
+        var joined = sql.join(users, purchases, "USER_ID", "USER_ID");
+
+        assertThat(joined).isEqualTo(Table.of(List.of("USER_ID", "NAME", "EMAIL", "AD_ID", "TITLE", "USER_ID"), List.of(
+                List.of("2", "manuel", "manuel@foo.de", "4", "guitar-1" , "2"),
+                List.of("1", "andre", "andre@bar.de", "1", "car-1" , "1"),
+                List.of("1", "andre", "andre@bar.de", "2", "car-2" , "1"),
+                List.of("1", "andre", "andre@bar.de", "3", "car-3" , "1"),
+                List.of("1", "andre", "andre@bar.de", "9", "chair-1" , "1"),
+                List.of("3", "swen", "swen@foo.de", "5", "guitar-2" , "3"),
+                List.of("4", "lydia", "lydia@bar.de", "6", "table-2" , "4"),
+                List.of("4", "lydia", "lydia@bar.de", "7", "table-1" , "4")
+        )));
+    }
 }
