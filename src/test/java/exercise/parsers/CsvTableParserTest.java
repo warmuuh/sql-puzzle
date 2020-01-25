@@ -2,9 +2,11 @@ package exercise.parsers;
 
 import exercise.Table;
 import exercise.exception.IllegalHeaderException;
+import exercise.exception.ParseException;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import static exercise.utils.TestUtils.toStream;
@@ -93,6 +95,16 @@ class CsvTableParserTest {
                 .containsExactly(List.of("value1", "value2"),
                                  List.of("value3", "value4"));
 
+    }
+
+    @Test
+    void throwParseExceptionOnError() throws IOException {
+        var sut = new CsvTableParser();
+        var stream = spy(toStream("test"));
+        doThrow(new IOException("test")).when(stream).close();
+
+        assertThatThrownBy(() -> sut.parseTable(stream))
+                .isInstanceOf(ParseException.class);
     }
 
 }
