@@ -36,6 +36,11 @@ What would you do if you had more time? Which trade-offs did you take?
 * support escaping in csv file
 * improve performance- reduce unnecessary iterations over rows, e.g. in Table-Constructor, maybe convert to lazy.
 * improve performance- cache some lookups, such as Table::getHeader(name)
+* improve performance- add indexed columns so e.g. join has better complexity then n².
+* have a better api, maybe a fluent one on table-objects, so the code that works with tables is more readable. (e.g. table.innerJoin(otherTable...) instead of sql.join(table1, table2,...). 
+* having these methods on the table-class would also make switching db easy without changing much. tables could be either in memory using java-streams for logic or can be in an actual database, transparent to the user.
+* also more convenience functions (such as table::getColumn, table::getRow(idx)) but these were not necessary for the presented requirements
+
 
 
 
