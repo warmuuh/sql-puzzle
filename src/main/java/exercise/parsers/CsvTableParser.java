@@ -33,7 +33,7 @@ public class CsvTableParser implements TableParser {
             List<List<String>> tokenizedLines = tokenizeLines(in);
             List<String> headers = extractHeaders(tokenizedLines);
             List<List<String>> rows = extractRows(tokenizedLines);
-            return new Table(headers, rows);
+            return Table.of(headers, rows);
         } catch (IOException e) {
             throw new ParseException("Failed to parse CSV content", e);
         }

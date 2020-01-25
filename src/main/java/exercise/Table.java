@@ -1,14 +1,18 @@
 package exercise;
 
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+@ToString
+@EqualsAndHashCode
 @RequiredArgsConstructor
 public class Table {
 
@@ -21,35 +25,35 @@ public class Table {
     @Value
     public static class Row {
         List<String> values;
-        int index;
     }
 
-    private final List<Header> headers = new ArrayList<>();
-    private final List<Row> rows  = new ArrayList<>();
+    private final List<Header> headers;
+    private final List<Row> rows;
 
 
-    public Table(List<String> headerNames, List<List<String>> rowValues) {
-        initHeaders(headerNames);
-        initRows(rowValues);
+    public static Table of(List<String> headerNames, List<List<String>> rowValues) {
+        return new Table(initHeaders(headerNames), initRows(rowValues));
     }
 
-    private void initRows(List<List<String>> rowValues) {
-        for (int i = 0; i < rowValues.size(); i++) {
-            List<String> values = rowValues.get(i);
-            rows.add(new Row(values, i));
-        }
+    private static List<Row> initRows(List<List<String>> rowValues) {
+        return rowValues.stream().map(Row::new).collect(Collectors.toList());
     }
 
-    private void initHeaders(List<String> headerNames) {
+    private static List<Header> initHeaders(List<String> headerNames) {
+        List<Header> headers = new ArrayList<>();
         for (int i = 0; i < headerNames.size(); i++) {
             String name = headerNames.get(i);
             headers.add(new Header(name, i));
         }
+        return headers;
     }
-
 
     public List<Header> getHeaders() {
         return Collections.unmodifiableList(headers);
+    }
+
+    public Optional<Header> getHeader(String name) {
+        return headers.stream().filter(h -> h.getName().equals(name)).findAny();
     }
 
     public List<Row> getRows() {

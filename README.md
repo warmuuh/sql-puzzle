@@ -37,6 +37,8 @@ Coding guidance: Combine "clean, object-oriented, tested code" with "working sof
 What would you do if you had more time? Which trade-offs did you take?
 
 * support escaping in csv file
+* improve performance- reduce unnecessary iterations over rows, e.g. in Table-Constructor, maybe convert to lazy.
+* improve performance- cache some lookups, such as Table::getHeader(name)
 
 
 Have fun!

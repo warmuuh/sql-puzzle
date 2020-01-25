@@ -12,7 +12,7 @@ class TableTest {
 
     @Test
     void shouldCreateCorrectHeaderObjects(){
-        var sut = new Table(List.of("header1", "header2"), Collections.emptyList());
+        var sut = Table.of(List.of("header1", "header2"), Collections.emptyList());
         assertThat(sut.getHeaders())
                 .containsExactly(new Table.Header("header1", 0),
                                  new Table.Header("header2", 1));
@@ -20,10 +20,31 @@ class TableTest {
 
     @Test
     void shouldCreateCorrectRowObjects(){
-        var sut = new Table(List.of("header1", "header2"), List.of(List.of("row1Value1", "row1Value2"), List.of("row2Value1", "row2Value2")));
+        var sut = Table.of(List.of("header1", "header2"), List.of(List.of("row1Value1", "row1Value2"), List.of("row2Value1", "row2Value2")));
         assertThat(sut.getRows())
-                .containsExactly(new Table.Row(List.of("row1Value1", "row1Value2"), 0),
-                                 new Table.Row(List.of("row2Value1", "row2Value2"), 1));
+                .containsExactly(new Table.Row(List.of("row1Value1", "row1Value2")),
+                                 new Table.Row(List.of("row2Value1", "row2Value2")));
     }
 
+    @Test
+    void shouldSupportEquals(){
+        var table1 = Table.of(List.of("header1", "header2"), Collections.emptyList());
+        var table2 = Table.of(List.of("header1", "header2"), Collections.emptyList());
+        assertThat(table1).isEqualTo(table2);
+    }
+
+    @Test
+    void shouldSupportHashcode(){
+        var table1 = Table.of(List.of("header1", "header2"), Collections.emptyList());
+        var table2 = Table.of(List.of("header1", "header2"), Collections.emptyList());
+        assertThat(table1.hashCode()).isEqualTo(table2.hashCode());
+    }
+
+    @Test
+    void shouldLookupHeaders(){
+        var sut = Table.of(List.of("header1", "header2"), Collections.emptyList());
+
+        assertThat(sut.getHeader("header1")).contains(new Table.Header("header1", 0));
+        assertThat(sut.getHeader("unknownHeader")).isEmpty();
+    }
 }
