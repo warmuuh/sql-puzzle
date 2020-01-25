@@ -4,6 +4,8 @@ import exercise.Table;
 import exercise.exception.IllegalHeaderException;
 import exercise.exception.ParseException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,6 +100,21 @@ class CsvTableParserTest {
     }
 
     @Test
+    void shouldHandleEmptyValues(){
+        String csvContent = "header1,header2\n"+
+                ",\n";
+
+        var sut = new CsvTableParser();
+        var table = sut.parseTable(toStream(csvContent));
+        assertThat(table).isNotNull();
+        assertThat(table.getRows())
+                .extracting(Table.Row::getValues)
+                .containsExactly(List.of("", ""));
+
+    }
+
+
+    @Test
     void throwParseExceptionOnError() throws IOException {
         var sut = new CsvTableParser();
         var stream = spy(toStream("test"));
@@ -107,4 +124,26 @@ class CsvTableParserTest {
                 .isInstanceOf(ParseException.class);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "header1,header2\nvalue1,value2,value3\n",
+            "header1,header2\nvalue1\n"
+    })
+    void shouldHandleInvalidRows(String csvContent){
+        var sut = new CsvTableParser(",", row -> {throw new IllegalArgumentException("test");});
+        assertThatThrownBy(() -> sut.parseTable(toStream(csvContent)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("test");
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "header1,header2\nvalue1,value2,value3\n",
+            "header1,header2\nvalue1\n"
+    })
+    void shouldIgnoreInvalidLinesByDefault(String csvContent){
+        var sut = new CsvTableParser();
+        assertThat(sut.parseTable(toStream(csvContent)).getRows()).isEmpty();
+    }
 }

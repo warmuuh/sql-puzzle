@@ -1,9 +1,6 @@
 package exercise;
 
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.Value;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,27 +9,24 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ToString
+@Getter
 @EqualsAndHashCode
-@RequiredArgsConstructor
 public class Table {
-
-    @Value
-    public static class Header {
-        String name;
-        int index;
-    }
-
-    @Value
-    public static class Row {
-        List<String> values;
-    }
 
     private final List<Header> headers;
     private final List<Row> rows;
 
-
     public static Table of(List<String> headerNames, List<List<String>> rowValues) {
         return new Table(initHeaders(headerNames), initRows(rowValues));
+    }
+
+    public Table(List<Header> headers, List<Row> rows) {
+        this.headers = Collections.unmodifiableList(headers);
+        this.rows = Collections.unmodifiableList(rows);
+    }
+
+    public Optional<Header> getHeader(String name) {
+        return headers.stream().filter(h -> h.getName().equals(name)).findAny();
     }
 
     private static List<Row> initRows(List<List<String>> rowValues) {
@@ -48,15 +42,18 @@ public class Table {
         return headers;
     }
 
-    public List<Header> getHeaders() {
-        return Collections.unmodifiableList(headers);
+    @Value
+    public static class Header {
+        String name;
+        int index;
     }
 
-    public Optional<Header> getHeader(String name) {
-        return headers.stream().filter(h -> h.getName().equals(name)).findAny();
-    }
+    @Value
+    public static class Row {
+        List<String> values;
 
-    public List<Row> getRows() {
-        return Collections.unmodifiableList(rows);
+        public String getValue(Header header){
+            return values.get(header.getIndex());
+        }
     }
 }

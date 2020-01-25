@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 public class JoinCommand extends AbstractCommand {
@@ -22,16 +23,13 @@ public class JoinCommand extends AbstractCommand {
 
         var joinedRows = left.getRows().stream()
                 .flatMap(leftRow -> {
-                    var joinValue = leftRow.getValues().get(leftHeader.getIndex());
+                    var joinValue = leftRow.getValue(leftHeader);
                     return findRowWithValue(right, rightHeader, joinValue)
-                            .stream()
                             .map(rightRow -> joinRows(leftRow, rightRow));
                 }).collect(Collectors.toList());
 
-
         return new Table(joinHeaders(left.getHeaders(), right.getHeaders()), joinedRows);
     }
-
 
     private List<Table.Header> joinHeaders(List<Table.Header> leftHeaders, List<Table.Header> rightHeaders) {
         var values = new ArrayList<Table.Header>(leftHeaders.size() + rightHeaders.size());
@@ -50,11 +48,8 @@ public class JoinCommand extends AbstractCommand {
         return new Table.Row(values);
     }
 
-
-    private List<Table.Row> findRowWithValue(Table table, Table.Header header, String value){
+    private Stream<Table.Row> findRowWithValue(Table table, Table.Header header, String value){
         return table.getRows().stream()
-                .filter(r -> r.getValues().get(header.getIndex()).equals(value))
-                .collect(Collectors.toList());
+                .filter(r -> r.getValue(header).equals(value));
     }
-
 }
