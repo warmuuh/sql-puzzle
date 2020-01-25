@@ -74,7 +74,7 @@ public class CsvTableParser implements TableParser {
     private List<List<String>> tokenizeLines(InputStream csvContent) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(csvContent));
         return reader.lines()
-                .map(separator::split)
+                .map(line -> separator.split(line, -1))
                 .map(Arrays::asList)
                 .map(this::trimValues)
                 .collect(Collectors.toList());
