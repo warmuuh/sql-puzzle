@@ -1,7 +1,4 @@
-![eBayK Logo](https://www.ebay-kleinanzeigen.de/static/img/common/logo/logo-ebayk-402x80.png)
 # SQL Coding Challenge
-
-Congratulations! You made it to the eBay Kleinanzeigen remote SQL Coding Challenge, where we want to see your hands-on coding skills.
 
 
 ## Steps
