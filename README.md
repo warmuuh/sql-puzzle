@@ -40,6 +40,7 @@ What would you do if you had more time? Which trade-offs did you take?
 * have a better api, maybe a fluent one on table-objects, so the code that works with tables is more readable. (e.g. table.innerJoin(otherTable...) instead of sql.join(table1, table2,...). 
 * having these methods on the table-class would also make switching db easy without changing much. tables could be either in memory using java-streams for logic or can be in an actual database, transparent to the user.
 * also more convenience functions (such as table::getColumn, table::getRow(idx)) but these were not necessary for the presented requirements
+* reduce memory footprint. The code uses immutable tables. Operations such as join create a copy of the original table. A better way would be to create a view on the original tables or some more lightweight (memory wise) abstraction.
 
 
 
